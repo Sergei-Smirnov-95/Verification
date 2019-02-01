@@ -7,12 +7,11 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
+	"os"
 	"strconv"
 )
 
-// This example shows what an AST looks like when printed for debugging
 func ExamplePrint() {
-	// src is the input for which we want to print the AST.
 	src := `
 package main
 func foo() {
@@ -34,8 +33,12 @@ func main() {
 }
 `
 
-	// Create the AST by parsing src.
-	fset := token.NewFileSet() // positions are relative to fset
+	fset := token.NewFileSet()
+	file, err := os.Create("assist.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 	f, err := parser.ParseFile(fset, "", src, 0)
 	if err != nil {
 		panic(err)
@@ -50,7 +53,9 @@ func main() {
 					fmt.Fprintf(&buf, "\t%s\n", formatNode(fset, n))
 				}
 			}
-			fmt.Println("control flow graph " + strconv.Itoa(i) + ":\n" + cfg.Format(fset))
+			str := "digraph CFG" + strconv.Itoa(i) + "{\n" + cfg.Format(fset) + "}\n"
+			fmt.Printf(str)
+			file.WriteString(str)
 			i++
 		}
 	}
@@ -60,7 +65,6 @@ func main() {
 func formatNode(fset *token.FileSet, n ast.Node) string {
 	var buf bytes.Buffer
 	format.Node(&buf, fset, n)
-	// Indent secondary lines by a tab.
 	return string(bytes.Replace(buf.Bytes(), []byte("\n"), []byte("\n\t"), -1))
 }
 
