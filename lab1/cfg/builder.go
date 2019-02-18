@@ -7,10 +7,8 @@ import (
 )
 
 type builder struct {
-	cfg *CFG
-	//mayReturn func(*ast.CallExpr) bool
+	cfg     *CFG
 	current *Block
-	//lblocks map[*ast.Object]*lblock // labeled blocks
 	targets *targets // linked stack of branch targets
 }
 
@@ -41,7 +39,7 @@ func (b *builder) stmt(_s ast.Stmt) {
 
 	case *ast.ReturnStmt:
 		b.add(s)
-		b.current = b.newUnreachableBlock("unreachable.return")
+		b.current = b.newUnreachableBlock("mb unreachable(return)")
 	case *ast.BlockStmt:
 		b.stmtList(s.List)
 
@@ -137,19 +135,18 @@ type lblock struct {
 	_continue *Block
 }
 
-func (b *builder) newBlock(comment string) *Block {
+func (b *builder) newBlock(nodeType string) *Block {
 	g := b.cfg
 	block := &Block{
-		index:   int32(len(g.Blocks)),
-		comment: comment,
+		index:    int32(len(g.Blocks)),
+		nodeType: nodeType,
 	}
-	block.Succs = block.succs2[:0]
 	g.Blocks = append(g.Blocks, block)
 	return block
 }
 
-func (b *builder) newUnreachableBlock(comment string) *Block {
-	block := b.newBlock(comment)
+func (b *builder) newUnreachableBlock(nodeType string) *Block {
+	block := b.newBlock(nodeType)
 	block.unreachable = true
 	return block
 }

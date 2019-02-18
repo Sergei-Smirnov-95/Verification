@@ -1,4 +1,8 @@
 digraph CFG1{
+"entry[0]"->"if.then[1]";
+"entry[0]"->"if.done[2]";
+"if.then[1]"->"if.done[2]";
+"if.done[2]"->"end";
 }
 digraph CFG2{
 "entry[0]"->"if.then[1]";
@@ -8,9 +12,11 @@ digraph CFG2{
 "if.else[3]"->"if.done[2]";
 "for.body[4]"->"if.then[8]";
 "for.body[4]"->"if.done[9]";
+"for.done[5]"->"end";
 "for.loop[6]"->"for.body[4]";
 "for.loop[6]"->"for.done[5]";
 "for.post[7]"->"for.loop[6]";
-"if.then[8]"->"if.done[9]";
+"if.then[8]"->"end";
 "if.done[9]"->"for.post[7]";
+"mb unreachable(return)[10]"->"if.done[9]";
 }
