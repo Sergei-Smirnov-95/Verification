@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"go/ast"
-	"go/token"
 )
 
 type CFG struct {
@@ -12,12 +11,11 @@ type CFG struct {
 }
 
 type Block struct {
-	Nodes []ast.Node // statements, expressions, and ValueSpecs
-	Succs []*Block   // successor nodes in the graph
-
-	nodeType    string // type of nodes
-	index       int32  // index within CFG.Blocks
-	unreachable bool   // is block of stmts following return/panic/for{}
+	Nodes       []ast.Node // statements, expressions, and ValueSpecs
+	Succs       []*Block   // successor nodes in the graph
+	nodeType    string     // type of nodes
+	index       int32      // index within CFG.Blocks
+	unreachable bool       // is block of stmts following return/panic/for{}
 }
 
 func New(body *ast.BlockStmt) *CFG {
@@ -25,17 +23,17 @@ func New(body *ast.BlockStmt) *CFG {
 		cfg: new(CFG)}
 	b.current = b.newBlock("entry")
 	b.stmt(body)
-	/*if !b.current.unreachable { //b.current != nil &&
+	if b.current != nil && !b.current.unreachable {
 
 		b.add(&ast.ReturnStmt{
 			Return: body.End() - 1,
 		})
-	}*/
+	}
 
 	return b.cfg
 }
 
-func (g *CFG) Format(fset *token.FileSet) string {
+func (g *CFG) Format() string {
 	var buf bytes.Buffer
 	for _, b := range g.Blocks {
 		if len(b.Succs) > 0 {
