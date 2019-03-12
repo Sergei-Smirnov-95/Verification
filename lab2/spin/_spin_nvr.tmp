@@ -1,0 +1,83 @@
+never rool1 {    /* !(<> ([] (((pay_queue[0]==FREE)) && ((pay_queue[1]==FREE))))) */
+T0_init:
+	do
+	:: (! ((((pay_queue[0]==FREE)) && ((pay_queue[1]==FREE))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool2 {    /* !(<> ([] (((wait_queue[0]==FREE)) && ((wait_queue[1]==FREE))))) */
+T0_init:
+	do
+	:: (! ((((wait_queue[0]==FREE)) && ((wait_queue[1]==FREE))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool3 {    /* !(<> ([] ((((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))) && (((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY)))) && (((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY)))) && (((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY)))))) */
+T0_init:
+	do
+	:: (! (((((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))) && (((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY)))) && (((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY)))) && (((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY)))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool4 {    /* !(((([] ((! ((! (((visitor[0]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) || (<> ((visitor[0]==WAIT_ACTION))))) || (<> (((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY)))))) && ([] ((! ((! (((visitor[1]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) || (<> ((visitor[1]==WAIT_ACTION))))) || (<> (((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY))))))) && ([] ((! ((! (((visitor[2]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) || (<> ((visitor[2]==WAIT_ACTION))))) || (<> (((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY))))))) && ([] ((! ((! (((visitor[3]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) || (<> ((visitor[3]==WAIT_ACTION))))) || (<> (((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY))))))) */
+T0_init:
+	do
+	:: ((((! (((visitor[3]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) && ! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY))))) || (! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY)))) && ((visitor[3]==WAIT_ACTION))))) -> goto accept_S6
+	:: (! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY))))) -> goto T0_S17
+	:: ((((! (((visitor[2]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) && ! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY))))) || (! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY)))) && ((visitor[2]==WAIT_ACTION))))) -> goto accept_S29
+	:: (! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY))))) -> goto T0_S40
+	:: ((((! (((visitor[1]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) && ! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY))))) || (! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY)))) && ((visitor[1]==WAIT_ACTION))))) -> goto accept_S52
+	:: (! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY))))) -> goto T0_S63
+	:: ((((! (((visitor[0]==WAIT_PAY)) && ((((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))) || ((wait_queue[0]==FREE))))) && ! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))))) || (! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY)))) && ((visitor[0]==WAIT_ACTION))))) -> goto accept_S75
+	:: (! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))))) -> goto T0_S86
+	:: (1) -> goto T0_init
+	od;
+accept_S6:
+	do
+	:: (! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY))))) -> goto accept_S6
+	od;
+accept_S29:
+	do
+	:: (! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY))))) -> goto accept_S29
+	od;
+accept_S52:
+	do
+	:: (! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY))))) -> goto accept_S52
+	od;
+accept_S75:
+	do
+	:: (! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))))) -> goto accept_S75
+	od;
+T0_S17:
+	do
+	:: (! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY)))) && ((visitor[3]==WAIT_ACTION))) -> goto accept_S6
+	:: (! ((((visitor[3]==ACTION)) || ((visitor[3]==GO_AWAY))))) -> goto T0_S17
+	od;
+T0_S40:
+	do
+	:: (! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY)))) && ((visitor[2]==WAIT_ACTION))) -> goto accept_S29
+	:: (! ((((visitor[2]==ACTION)) || ((visitor[2]==GO_AWAY))))) -> goto T0_S40
+	od;
+T0_S63:
+	do
+	:: (! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY)))) && ((visitor[1]==WAIT_ACTION))) -> goto accept_S52
+	:: (! ((((visitor[1]==ACTION)) || ((visitor[1]==GO_AWAY))))) -> goto T0_S63
+	od;
+T0_S86:
+	do
+	:: (! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY)))) && ((visitor[0]==WAIT_ACTION))) -> goto accept_S75
+	:: (! ((((visitor[0]==ACTION)) || ((visitor[0]==GO_AWAY))))) -> goto T0_S86
+	od;
+}
