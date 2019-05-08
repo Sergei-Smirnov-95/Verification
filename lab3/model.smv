@@ -1,0 +1,71 @@
+MODULE main
+VAR
+    client1 : process clients (0, clientsStates, pay_queue, wait_queue);
+    client2 : process clients (1, clientsStates, pay_queue, wait_queue);
+    client3 : process clients (2, clientsStates, pay_queue, wait_queue);
+    client4 : process clients (3, clientsStates, pay_queue, wait_queue);
+
+
+    clientsStates : array 0..4 of {waitPay, pay, waitAction, action, goAway};
+    wait_queue : {empty, oneClient, twoClients, busy};
+    pay_queue : {empty, oneClient, twoClients, busy};
+
+    
+ASSIGN
+    init(wait_queue) := empty;
+    init(pay_queue) := empty;
+
+
+MODULE clients(id, clientsStates, pay_queue, wait_queue)
+
+DEFINE
+    state := clientsStates[id];
+
+ASSIGN
+    init (clientsStates[id]) := waitPay;
+
+next(pay_queue) :=
+    case
+        state = waitPay & pay_queue = empty : oneClient;
+        state = waitPay & pay_queue = oneClient : twoClients;
+        state = waitPay & pay_queue = twoClients : busy;
+        state = waitAction & pay_queue = busy : twoClients;
+        state = waitAction & pay_queue = twoClients : oneClient;
+        state = waitAction & pay_queue = oneClient : empty;
+        TRUE : pay_queue;
+    esac;
+next(wait_queue) :=
+    case
+        state = action & wait_queue = busy : twoClients;
+        state = action & wait_queue = twoClients : oneClient;
+        state = action & wait_queue = oneClient : empty;
+        state = waitAction & wait_queue = twoClients : busy ;
+        state = waitAction & wait_queue = oneClient : twoClients;
+        state = waitAction & wait_queue = empty : oneClient;
+        TRUE : wait_queue;
+    esac;
+next (clientsStates[id]) :=
+    case
+        state = waitPay & pay_queue != busy : pay;
+        state = pay & wait_queue != busy : waitAction;
+        state = waitAction & wait_queue = busy : goAway;
+        state = waitAction & wait_queue != busy : action;
+        state = action : goAway;
+        TRUE : state;
+    esac;
+
+FAIRNESS
+   running
+
+LTLSPEC G ((clientsStates[0] = action & (clientsStates[1] = action) & (clientsStates[2] =
+action) & (clientsStates[3] != action)) -> wait_queue = busy)
+
+LTLSPEC G ((clientsStates[0] = pay & (clientsStates[1] = pay) & (clientsStates[2] =
+pay) & (clientsStates[3] != pay)) -> pay_queue = busy)
+
+CTLSPEC AF (pay_queue = busy -> pay_queue = empty)
+
+CTLSPEC AF (wait_queue = busy -> AF wait_queue = empty)
+
+CTLSPEC AF ((clientsStates[0] = goAway) & (clientsStates[1] = goAway) &
+    (clientsStates[2] = goAway) & (clientsStates[3] = goAway))
