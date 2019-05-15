@@ -1,4 +1,4 @@
-#define num_visitors  5
+#define num_visitors  2
 #define waitingTime  10
 
 mtype = { WAIT_PAY, WAIT_ACTION, ACTION, GO_AWAY };

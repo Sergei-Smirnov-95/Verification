@@ -34,7 +34,7 @@ func (b *builder) stmt(_s ast.Stmt) {
 
 	case *ast.ReturnStmt:
 		b.add(s)
-		b.current = b.newUnreachableBlock("//mb unreachable(return)")
+		b.current = b.newUnreachableBlock("")
 	case *ast.BlockStmt:
 		b.stmtList(s.List)
 
@@ -42,11 +42,11 @@ func (b *builder) stmt(_s ast.Stmt) {
 		if s.Init != nil {
 			b.stmt(s.Init)
 		}
-		then := b.newBlock("if.then")
-		done := b.newBlock("if.done")
+		then := b.newBlock("[if.then]")
+		done := b.newBlock("[if.done]")
 		_else := done
 		if s.Else != nil {
-			_else = b.newBlock("if.else")
+			_else = b.newBlock("[if.else]")
 		}
 		b.add(s.Cond)
 		b.ifelse(then, _else)
@@ -79,15 +79,15 @@ func (b *builder) forStmt(s *ast.ForStmt) {
 	if s.Init != nil {
 		b.stmt(s.Init)
 	}
-	body := b.newBlock("for.body")
-	done := b.newBlock("for.done")
+	body := b.newBlock("[for.body]")
+	done := b.newBlock("[for.done]")
 	loop := body
 	if s.Cond != nil {
-		loop = b.newBlock("for.loop")
+		loop = b.newBlock("[for.loop]")
 	}
 	cont := loop
 	if s.Post != nil {
-		cont = b.newBlock("for.post")
+		cont = b.newBlock("[for.post]")
 	}
 
 	b.jump(loop)
@@ -112,7 +112,7 @@ func (b *builder) forStmt(s *ast.ForStmt) {
 func (b *builder) newBlock(nodeType string) *Block {
 	g := b.cfg
 	block := &Block{
-		index:    int32(len(g.Blocks)),
+		Index:    int32(len(g.Blocks)),
 		nodeType: nodeType,
 	}
 	g.Blocks = append(g.Blocks, block)
@@ -121,7 +121,7 @@ func (b *builder) newBlock(nodeType string) *Block {
 
 func (b *builder) newUnreachableBlock(nodeType string) *Block {
 	block := b.newBlock(nodeType)
-	block.unreachable = true
+	block.unreachable = true 
 	return block
 }
 

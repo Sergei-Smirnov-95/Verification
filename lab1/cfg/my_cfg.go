@@ -4,18 +4,20 @@ import (
 	"bytes"
 	"fmt"
 	"go/ast"
+	"go/token"
+	"go/format"
 )
-
 type CFG struct {
 	Blocks []*Block
 }
 
 type Block struct {
-	Nodes       []ast.Node // statements, expressions, and ValueSpecs
-	Succs       []*Block   // successor nodes in the graph
+	Nodes       []ast.Node // statements, expressions...
+	Succs       []*Block   // successor nodes
 	nodeType    string     // type of nodes
-	index       int32      // index within CFG.Blocks
-	unreachable bool       // is block of stmts following return/panic/for{}
+	Index       int32      // index 
+	unreachable bool       // return...
+
 }
 
 func New(body *ast.BlockStmt) *CFG {
@@ -33,20 +35,37 @@ func New(body *ast.BlockStmt) *CFG {
 	return b.cfg
 }
 
-func (g *CFG) Format() string {
+func (g *CFG) Format(fset *token.FileSet) string {
 	var buf bytes.Buffer
 	for _, b := range g.Blocks {
 		if len(b.Succs) > 0 {
+			//fmt.Fprintf(&buf, "\tsuccs:")
 			for _, succ := range b.Succs {
-				fmt.Fprintf(&buf, "\"%s[%d]\"", b.nodeType, b.index)
-				fmt.Fprintf(&buf, "->")
-				fmt.Fprintf(&buf, "\"%s[%d]\";\n", succ.nodeType, succ.index)
+				if b.nodeType != "" {
+					fmt.Fprintf(&buf, "\"")
+					fmt.Fprintf(&buf, "%s\n", b.nodeType)
+					for _, n := range b.Nodes {
+						fmt.Fprintf(&buf, "%s\n", formatNode(fset, n))
+					}
+					fmt.Fprintf(&buf, "\"")
+					fmt.Fprintf(&buf, "->")
+					fmt.Fprintf(&buf, "\"")
+					fmt.Fprintf(&buf, "%s\n", succ.nodeType)
+					for _, n := range succ.Nodes {
+						fmt.Fprintf(&buf, "%s\n", formatNode(fset, n))
+					}
+					fmt.Fprintf(&buf, "\";")
+				}
 			}
-		} else if len(b.Succs) == 0 && len(b.nodeType) > 0 {
-			fmt.Fprintf(&buf, "\"%s[%d]\"", b.nodeType, b.index)
-			fmt.Fprintf(&buf, "->")
-			fmt.Fprintf(&buf, "\"%s\";\n", "end")
+			buf.WriteByte('\n')
 		}
+		buf.WriteByte('\n')
 	}
 	return buf.String()
+}
+
+func formatNode(fset *token.FileSet, n ast.Node) string {
+	var buf bytes.Buffer
+	format.Node(&buf, fset, n)
+	return string(bytes.Replace(buf.Bytes(), []byte("\n"), []byte("\n\t"), -1))
 }

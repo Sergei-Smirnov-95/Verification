@@ -1,0 +1,71 @@
+digraph CFG1{
+"entry
+n := 2
+b := 4
+(n < 3)
+"->"[if.then]
+println(n)
+n = b
+";"entry
+n := 2
+b := 4
+(n < 3)
+"->"[if.else]
+n = 3
+";
+
+"[if.then]
+println(n)
+n = b
+"->"[if.done]
+i := 1
+";
+
+"[if.done]
+i := 1
+"->"[for.loop]
+i < n
+";
+
+"[if.else]
+n = 3
+"->"[if.done]
+i := 1
+";
+
+"[for.body]
+i > 1
+"->"[if.then]
+println(i)
+return i
+";"[for.body]
+i > 1
+"->"[if.done]
+";
+
+
+"[for.loop]
+i < n
+"->"[for.body]
+i > 1
+";"[for.loop]
+i < n
+"->"[for.done]
+return
+";
+
+"[for.post]
+i++
+"->"[for.loop]
+i < n
+";
+
+
+"[if.done]
+"->"[for.post]
+i++
+";
+
+
+
+}

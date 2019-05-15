@@ -22,7 +22,7 @@ func worker() {
 	}
 	src := string(buf)
 	fset := token.NewFileSet()
-	file, err := os.Create("assist.txt")
+	file, err := os.Create("assist.gv")
 	if err != nil {
 		panic(err)
 	}
@@ -35,7 +35,7 @@ func worker() {
 	for _, decl := range f.Decls {
 		if decl, ok := decl.(*ast.FuncDecl); ok {
 			cfg := New(decl.Body)
-			str := "digraph CFG" + strconv.Itoa(i) + "{\n" + cfg.Format() + "}\n"
+			str := "digraph CFG" + strconv.Itoa(i) + "{\n" + cfg.Format(fset) + "}\n"
 			fmt.Printf(str)
 			file.WriteString(str)
 			i++

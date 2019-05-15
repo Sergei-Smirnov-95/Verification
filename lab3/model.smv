@@ -63,9 +63,9 @@ action) & (clientsStates[3] != action)) -> wait_queue = busy)
 LTLSPEC G ((clientsStates[0] = pay & (clientsStates[1] = pay) & (clientsStates[2] =
 pay) & (clientsStates[3] != pay)) -> pay_queue = busy)
 
-CTLSPEC AF (pay_queue = busy -> pay_queue = empty)
+CTLSPEC AG (pay_queue = busy -> AF pay_queue = empty)
 
-CTLSPEC AF (wait_queue = busy -> AF wait_queue = empty)
+CTLSPEC AG (wait_queue = busy -> AF wait_queue = empty)
 
 CTLSPEC AF ((clientsStates[0] = goAway) & (clientsStates[1] = goAway) &
     (clientsStates[2] = goAway) & (clientsStates[3] = goAway))
