@@ -1,5 +1,4 @@
-#define num_visitors  2
-#define waitingTime  10
+#define num_visitors 5 
 
 mtype = { WAIT_PAY, WAIT_ACTION, ACTION, GO_AWAY };
 mtype = { FREE, BUSY };
@@ -12,9 +11,9 @@ proctype queueAction(int id)
 {
     atomic{
 
-        int lottery;
+        int lottery = 2;
         int timer = 0;
-
+	int waitingTime = 1;
 	do
           :: 
 	  if
@@ -22,23 +21,24 @@ proctype queueAction(int id)
               if
               :: pay_queue[0] == FREE ->
                     pay_queue[0] = BUSY;
-                    select( lottery : 1..25);
+                    select( lottery : 1 .. 2);
                     if
-                    :: lottery == 5 ->
+                    :: lottery == 1 ->
                         visitor[id] = ACTION;
-                    :: lottery != 5 
+                    :: lottery != 1 
                         visitor[id] = WAIT_ACTION;
                     fi
               :: pay_queue[1] == FREE ->
                     pay_queue[1] = BUSY;
+                    select( lottery : 1 .. 2);
                     if
-                    :: lottery == 7 ->
+                    :: lottery == 1 ->
                         visitor[id] = ACTION;
-                    :: lottery != 7 
+                    :: lottery != 1 
                         visitor[id] = WAIT_ACTION;
                     fi
               fi
-           :: visitor[id] == WAIT_ACTION;
+           :: visitor[id] == WAIT_ACTION ->
               if
               :: wait_queue[0] == FREE ->
                     visitor[id] = ACTION;
@@ -80,12 +80,11 @@ init {
 
 	for(i: 0 .. (num_visitors -1)){
    		run queueAction(i)
-	}	
-
+	}
 }
 
 ltl rool1{
-    <>[] (pay_queue[0] == FREE && pay_queue[1] == FREE)
+   <>[](pay_queue[0] == FREE && pay_queue[1] == FREE)
 }
 
 ltl rool2{
@@ -93,25 +92,21 @@ ltl rool2{
 }
 
 ltl rool3{
-    <>[] ((visitor[0] == ACTION  || visitor[0] == GO_AWAY) && (visitor[1] ==
-ACTION  || visitor[1] == GO_AWAY) && (visitor[2] == ACTION
-|| visitor[2] == GO_AWAY)  && (visitor[3] == ACTION  || visitor[3] ==
-GO_AWAY) )
+    <>[] ((visitor[0] == ACTION ) &&
+	 (visitor[1] == ACTION ) && 
+	 (visitor[2] == ACTION ) && 
+	 (visitor[3] == ACTION ))
 }
 
 ltl rool4{
-    []((visitor[0] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] ==
-FREE || wait_queue[0] == FREE))->(<>(visitor[0] ==
-WAIT_ACTION))->(<>(visitor[0] == ACTION || visitor[0] == GO_AWAY))) &&
-[]((visitor[1] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] ==
-FREE || wait_queue[0] == FREE))->(<>(visitor[1] ==
-WAIT_ACTION))->(<>(visitor[1] == ACTION || visitor[1] == GO_AWAY))) &&
-[]((visitor[2] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] ==
-FREE || wait_queue[0] == FREE))->(<>(visitor[2] ==
-WAIT_ACTION))->(<>(visitor[2] == ACTION || visitor[2] == GO_AWAY))) &&
-[]((visitor[3] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] ==
-FREE || wait_queue[0] == FREE))->(<>(visitor[3] ==
-WAIT_ACTION))->(<>(visitor[3] == ACTION || visitor[3] == GO_AWAY)))
+    []((visitor[0] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] == FREE ))
+->(( visitor[0] == WAIT_ACTION || visitor[0] == ACTION))) && 
+    []((visitor[1] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] == FREE ))
+->(( visitor[1] == WAIT_ACTION || visitor[1] == ACTION))) &&
+    []((visitor[2] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] == FREE ))
+->(( visitor[2] == WAIT_ACTION || visitor[2] == ACTION))) &&
+    []((visitor[3] == WAIT_PAY && (pay_queue[0] == FREE || pay_queue[1] == FREE ))
+->(( visitor[3] == WAIT_ACTION || visitor[3] == ACTION))) 
 }
 
 
