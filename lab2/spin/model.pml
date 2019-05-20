@@ -13,7 +13,7 @@ proctype queueAction(int id)
 
         int lottery = 2;
         int timer = 0;
-	int waitingTime = 1;
+	int waitingTime = 2;
 	do
           :: 
 	  if

@@ -1,0 +1,47 @@
+never rool1 {    /* !(<> ([] (((pay_queue[0]==FREE)) && ((pay_queue[1]==FREE))))) */
+T0_init:
+	do
+	:: (! ((((pay_queue[0]==FREE)) && ((pay_queue[1]==FREE))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool2 {    /* !(<> ([] (((wait_queue[0]==FREE)) && ((wait_queue[1]==FREE))))) */
+T0_init:
+	do
+	:: (! ((((wait_queue[0]==FREE)) && ((wait_queue[1]==FREE))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool3 {    /* !(<> ([] (((((visitor[0]==ACTION)) && ((visitor[1]==ACTION))) && ((visitor[2]==ACTION))) && ((visitor[3]==ACTION))))) */
+T0_init:
+	do
+	:: (! ((((((visitor[0]==ACTION)) && ((visitor[1]==ACTION))) && ((visitor[2]==ACTION))) && ((visitor[3]==ACTION))))) -> goto accept_S9
+	:: (1) -> goto T0_init
+	od;
+accept_S9:
+	do
+	:: (1) -> goto T0_init
+	od;
+}
+never rool4 {    /* !(((([] ((! (((visitor[0]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (<> (((visitor[0]==WAIT_ACTION)) || ((visitor[0]==ACTION)))))) && ([] ((! (((visitor[1]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[1]==WAIT_ACTION)) || ((visitor[1]==ACTION)))))) && ([] ((! (((visitor[2]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[2]==WAIT_ACTION)) || ((visitor[2]==ACTION)))))) && ([] ((! (((visitor[3]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[3]==WAIT_ACTION)) || ((visitor[3]==ACTION)))))) */
+T0_init:
+	do
+	:: (! ((! (((visitor[0]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE)))))) && ! ((((visitor[0]==WAIT_ACTION)) || ((visitor[0]==ACTION)))) && ((! ((! (((visitor[0]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))))) || (((! (((! (((visitor[1]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[1]==WAIT_ACTION)) || ((visitor[1]==ACTION)))))) || (((! (((! (((visitor[2]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[2]==WAIT_ACTION)) || ((visitor[2]==ACTION)))))) || (! (((! (((visitor[3]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[3]==WAIT_ACTION)) || ((visitor[3]==ACTION)))))))))))) -> goto accept_S7
+	:: atomic { (((! (((! (((visitor[1]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[1]==WAIT_ACTION)) || ((visitor[1]==ACTION)))))) || (((! (((! (((visitor[2]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[2]==WAIT_ACTION)) || ((visitor[2]==ACTION)))))) || (! (((! (((visitor[3]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[3]==WAIT_ACTION)) || ((visitor[3]==ACTION)))))))))) -> assert(!(((! (((! (((visitor[1]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[1]==WAIT_ACTION)) || ((visitor[1]==ACTION)))))) || (((! (((! (((visitor[2]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[2]==WAIT_ACTION)) || ((visitor[2]==ACTION)))))) || (! (((! (((visitor[3]==WAIT_PAY)) && (((pay_queue[0]==FREE)) || ((pay_queue[1]==FREE))))) || (((visitor[3]==WAIT_ACTION)) || ((visitor[3]==ACTION))))))))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_S7:
+	do
+	:: (! ((((visitor[0]==WAIT_ACTION)) || ((visitor[0]==ACTION))))) -> goto accept_S7
+	od;
+accept_all:
+	skip
+}

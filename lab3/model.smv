@@ -31,7 +31,7 @@ next(pay_queue) :=
         state = waitPay & pay_queue = twoClients : busy;
         state = waitAction & pay_queue = busy : twoClients;
         state = waitAction & pay_queue = twoClients : oneClient;
-        state = waitAction & pay_queue = oneClient : empty;
+        state = waitAction & pay_queue = oneClient : busy;
         TRUE : pay_queue;
     esac;
 next(wait_queue) :=
